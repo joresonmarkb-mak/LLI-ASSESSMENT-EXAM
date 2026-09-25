@@ -42,3 +42,24 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// DELETE PRODUCT
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('id', sql.Int, id)
+      .query('DELETE FROM Products WHERE ProductID = @id');
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.json({ message: 'Product deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
