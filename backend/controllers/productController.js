@@ -63,3 +63,47 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// UPDATE PRODUCT
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { productName, category, batchNumber, quantityInStock, unit, expiryDate, unitPrice } = req.body;
+
+    if (!productName || quantityInStock === undefined) {
+      return res.status(400).json({ message: 'Product name and quantity are required' });
+    }
+
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('id', sql.Int, id)
+      .input('productName', sql.NVarChar, productName)
+      .input('category', sql.NVarChar, category || null)
+      .input('batchNumber', sql.NVarChar, batchNumber || null)
+      .input('quantityInStock', sql.Int, quantityInStock)
+      .input('unit', sql.NVarChar, unit || 'pcs')
+      .input('expiryDate', sql.Date, expiryDate || null)
+      .input('unitPrice', sql.Decimal(10, 2), unitPrice || 0)
+      .query(`
+        UPDATE Products
+        SET ProductName = @productName,
+            Category = @category,
+            BatchNumber = @batchNumber,
+            QuantityInStock = @quantityInStock,
+            Unit = @unit,
+            ExpiryDate = @expiryDate,
+            UnitPrice = @unitPrice,
+            UpdatedAt = GETDATE()
+        WHERE ProductID = @id
+      `);
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.json({ message: 'Product updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
