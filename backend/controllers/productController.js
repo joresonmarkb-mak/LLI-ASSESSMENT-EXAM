@@ -1,6 +1,6 @@
 const { sql, poolPromise } = require('../config/db');
 
-// CREATE
+// CREATE PRODUCT
 exports.createProduct = async (req, res) => {
   try {
     const { productName, category, batchNumber, quantityInStock, unit, expiryDate, unitPrice } = req.body;
@@ -24,6 +24,19 @@ exports.createProduct = async (req, res) => {
       `);
 
     res.status(201).json({ message: 'Product created successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+// READ PRODUCT
+exports.getProducts = async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .query('SELECT * FROM Products ORDER BY ProductID DESC');
+
+    res.json(result.recordset);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
