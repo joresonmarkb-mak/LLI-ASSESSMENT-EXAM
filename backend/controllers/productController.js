@@ -107,3 +107,41 @@ exports.updateProduct = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// REPORT
+exports.getStockReport = async (req, res) => {
+  try {
+    const pool = await poolPromise;
+
+    const summary = await pool.request().query(`
+      SELECT 
+        COUNT(*) AS TotalProducts,
+        SUM(QuantityInStock) AS TotalStockQuantity,
+        SUM(QuantityInStock * UnitPrice) AS TotalStockValue
+      FROM Products
+    `);
+
+    const lowStock = await pool.request().query(`
+      SELECT ProductID, ProductName, QuantityInStock, Unit
+      FROM Products
+      WHERE QuantityInStock <= 50
+      ORDER BY QuantityInStock ASC
+    `);
+
+    const nearExpiry = await pool.request().query(`
+      SELECT ProductID, ProductName, BatchNumber, ExpiryDate
+      FROM Products
+      WHERE ExpiryDate IS NOT NULL AND ExpiryDate <= DATEADD(MONTH, 3, GETDATE())
+      ORDER BY ExpiryDate ASC
+    `);
+
+    res.json({
+      summary: summary.recordset[0],
+      lowStockItems: lowStock.recordset,
+      nearExpiryItems: nearExpiry.recordset,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
