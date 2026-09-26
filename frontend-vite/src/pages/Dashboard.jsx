@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, Row, Col, Statistic, Table, Spin, message, Space, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
-import * as productApi from '../api/products';
+import * as productApi from '../api/products.js';
 
 function Dashboard() {
   const user = JSON.parse(localStorage.getItem('user'));
