@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { Form, Input, Button, Card, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import api from '../api/axios';
 
 function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const onFinish = async (values) => {
     setLoading(true);
