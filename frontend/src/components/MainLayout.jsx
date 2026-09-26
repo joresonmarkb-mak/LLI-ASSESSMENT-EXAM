@@ -62,7 +62,7 @@ function MainLayout() {
           <Dropdown menu={userMenu} placement="bottomRight">
             <Space style={{ cursor: 'pointer' }}>
               <Avatar>{user?.firstName?.[0]}</Avatar>
-              <span >{user?.firstName} {user?.lastName}</span>
+              <span >{user?.firstName} {user?.lastName}- {user?.role}</span>
             </Space>
           </Dropdown>
         </Header>
