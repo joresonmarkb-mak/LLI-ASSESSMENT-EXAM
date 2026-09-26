@@ -4,4 +4,13 @@ const api = axios.create({
   baseURL: 'http://localhost:5000/api',
 });
 
+api.interceptors.request.use((config) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user) {
+    config.headers['x-username'] = user.username;
+    config.headers['x-role'] = user.role;
+  }
+  return config;
+});
+
 export default api;
