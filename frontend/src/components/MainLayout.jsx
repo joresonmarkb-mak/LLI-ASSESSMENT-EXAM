@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Layout, Menu, Button, Avatar, Space, Dropdown } from 'antd';
-import { DashboardOutlined, AppstoreOutlined, LogoutOutlined, MedicineBoxOutlined,ShoppingCartOutlined } from '@ant-design/icons';
+import { DashboardOutlined, AppstoreOutlined, LogoutOutlined, MedicineBoxOutlined,ShoppingCartOutlined,TeamOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
 const { Header, Sider, Content } = Layout;
@@ -14,7 +14,8 @@ function MainLayout() {
   const menuItems = [
     { key: '/dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: '/products', icon: <AppstoreOutlined />, label: 'Products' },
-     { key: '/orders', icon: <ShoppingCartOutlined />, label: 'Orders' },
+    { key: '/orders', icon: <ShoppingCartOutlined />, label: 'Orders' },
+    ...(user?.role === 'admin' ? [{ key: '/users', icon: <TeamOutlined />, label: 'Users' }] : []),
   ];
 
   const handleMenuClick = ({ key }) => {
